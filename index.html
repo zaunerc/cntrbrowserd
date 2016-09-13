@@ -1,29 +1,42 @@
 <html>
-	<head>
-		<title>Container Browser</title>
-		
-		<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.css">
-		<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-3.1.0.min.js"></script>
-		<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
+<head>
 
-<script>
-$(document).ready( function () {
-	$('#container_table').DataTable( {
-        "paging":   false,
-        "info":     false
-    } );
-} );
-</script>
+	<meta charset="utf-8">
 
-	</head>
-
-	<body>
-		
-	<h1>Container Browser</h1>
+	<title>Container Browser</title>
 	
-	<ul>
-		<li>Data was last refeshed on: {{.CurrentDateAndTime}}</li>
-	</ul>
+	<!-- jQuery -->
+	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+	<!-- datatables (requires: jQuery)-->
+	
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.css">
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
+
+	<!-- Bootstrap (requires: jQuery) -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<script>
+		$(document).ready( function () {
+			$('#container_table').DataTable( {
+		        "paging":   false,
+		        "info":     false
+		    } );
+		} );
+	</script>
+
+</head>
+
+<body>
+	
+<div class="container">
+
+	<div class="jumbotron">
+		<h1>Container Browser</h1>
+		<p>Data was last refeshed on {{.CurrentDateAndTime}} UTC. Listing {{.ContainerCount}} container(s).</p>
+	</div>
 
 	<table id="container_table" class="display">
 	    <thead>
@@ -48,9 +61,10 @@ $(document).ready( function () {
 	        </tr>
 		{{end}}
 	    </tbody>
-		<li>Data was last refeshed on: {{.CurrentDateAndTime}}</li>
 	</table>	
 
-	</body>
+</div>
+
+</body>
 
 </html>

@@ -92,6 +92,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	vars := map[string]interface{}{
 		"CurrentDateAndTime": currentDateAndTime,
 		"Containers":         containers,
+		"ContainerCount":     len(containers),
 	}
 
 	error = t.Execute(w, vars)
