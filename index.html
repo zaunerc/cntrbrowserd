@@ -1,0 +1,56 @@
+<html>
+	<head>
+		<title>Container Browser</title>
+		
+		<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.css">
+		<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
+
+<script>
+$(document).ready( function () {
+	$('#container_table').DataTable( {
+        "paging":   false,
+        "info":     false
+    } );
+} );
+</script>
+
+	</head>
+
+	<body>
+		
+	<h1>Container Browser</h1>
+	
+	<ul>
+		<li>Data was last refeshed on: {{.CurrentDateAndTime}}</li>
+	</ul>
+
+	<table id="container_table" class="display">
+	    <thead>
+	        <tr>
+	            <th>Hostname</th>
+	            <th>Container Info</th>
+	            <th>IP Address</th>
+	            <th>MAC Address</th>
+		    <th>Seconds since last registration</th>
+	            <th>Host</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+		{{range .Containers}}
+	        <tr>
+			<td>{{.Hostname}}</td>
+			<td><a href="{{.CntrInfodHttpUrl}}">Link (HTTP)</a></td>
+			<td>{{.IpAddress}}</td>
+			<td>{{.MacAddress}}</td>
+			<td>{{.AgeInSeconds}}</td>
+			<td>{{.HostHostname}}</td>
+	        </tr>
+		{{end}}
+	    </tbody>
+		<li>Data was last refeshed on: {{.CurrentDateAndTime}}</li>
+	</table>	
+
+	</body>
+
+</html>
