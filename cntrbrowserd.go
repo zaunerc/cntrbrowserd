@@ -43,7 +43,8 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:        "consulUrl, c",
-			Usage:       "Register container with consul at `URL`. Enables consul registration.",
+			Value:       "localhost:8500",
+			Usage:       "Connect to consul at `URL`. Do not specify URI scheme here.",
 			Destination: &consulUrl,
 		},
 	}
