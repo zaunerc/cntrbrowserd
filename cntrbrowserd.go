@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"time"
 
@@ -20,6 +21,8 @@ func init() {
 	// By default logger is set to write to stderr device.
 	//log.SetOutput(os.Stdout)
 }
+
+var staticDataDir string
 
 func main() {
 
@@ -46,6 +49,12 @@ func main() {
 			Value:       "localhost:8500",
 			Usage:       "Connect to consul at `URL`. Do not specify URI scheme here.",
 			Destination: &consulUrl,
+		},
+		cli.StringFlag{
+			Name:        "staticDataDir, d",
+			Value:       "/usr/local/share/cntrbrowserd/",
+			Usage:       "Directory containing static web site files.",
+			Destination: &staticDataDir,
 		},
 	}
 
@@ -85,7 +94,7 @@ func protect(handlerFunc http.HandlerFunc, htpasswdPath string) http.HandlerFunc
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
-	t, error := template.ParseFiles("index.html")
+	t, error := template.ParseFiles(path.Join(staticDataDir, "index.html"))
 
 	currentDateAndTime := time.Now().Format("2006-01-02 15:04:05")
 	containers := consul.FetchContainerData(consulUrl)
