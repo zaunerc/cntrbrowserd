@@ -60,7 +60,7 @@ func main() {
 
 	app.Email = "christoph.zauner@NLLK.net"
 	app.Author = "Christoph Zauner"
-	app.Version = "0.1.0"
+	app.Version = "0.2.0"
 	// cntrinfod, cntinfod
 	app.Usage = "Container Browser Daemon: Container-centric HTTP frontend for consul"
 
