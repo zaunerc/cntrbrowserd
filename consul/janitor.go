@@ -41,13 +41,23 @@ func runCleanUpTask(consulUrl string, sleepSeconds int) {
 			fmt.Printf("Error while trying to clean up container registry: %s\n", err)
 			continue
 		}
+		if allContainerKeys == nil {
+			fmt.Printf("No containers to clean up: Top-level key \"containers/\" does not exist.")
+			continue
+		}
+
 		instanceIds := DecodeInstanceIds(allContainerKeys)
 		fmt.Printf("%d containers listed in registry.\n", len(instanceIds))
 
 		for _, instanceId := range instanceIds {
-			kvp, _, err := kv.Get("containers/"+instanceId+"/unixEpochTimestamp", nil)
+			key := "containers/" + instanceId + "/unixEpochTimestamp"
+			kvp, _, err := kv.Get(key, nil)
 			if err != nil {
 				fmt.Printf("Error while trying to clean up container registry: %s\n", err)
+				continue
+			}
+			if kvp == nil {
+				fmt.Printf("Key >%s< does not exist in registry. Therefore skipping further processing steps specific to this key.", key)
 				continue
 			}
 			ageInSeconds := DetermineAgeInSeconds(kvp.Value)

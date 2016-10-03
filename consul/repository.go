@@ -40,52 +40,46 @@ func FetchContainerData(consulUrl string) []Container {
 	for _, instanceId := range instanceIds {
 
 		// cntrInfodUrl
-		kvp, _, err := kv.Get("containers/"+instanceId+"/cntrInfodHttpUrl", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes := internalGet(kv, "containers/"+instanceId+"/cntrInfodHttpUrl")
+		if valueAsBytes == nil {
 			return containers
 		}
-		cntrInfodHttpUrl := string(kvp.Value)
+		cntrInfodHttpUrl := string(valueAsBytes)
 
 		// MAC
-		kvp, _, err = kv.Get("containers/"+instanceId+"/macAdress", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/macAdress")
+		if valueAsBytes == nil {
 			return containers
 		}
-		macAddress := string(kvp.Value)
+		macAddress := string(valueAsBytes)
 
 		// IP
-		kvp, _, err = kv.Get("containers/"+instanceId+"/ipAdress", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/ipAdress")
+		if valueAsBytes == nil {
 			return containers
 		}
-		ipAddress := string(kvp.Value)
+		ipAddress := string(valueAsBytes)
 
 		// Unix Epoch Timestamp
-		kvp, _, err = kv.Get("containers/"+instanceId+"/unixEpochTimestamp", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/unixEpochTimestamp")
+		if valueAsBytes == nil {
 			return containers
 		}
-		ageInSeconds := DetermineAgeInSeconds(kvp.Value)
+		ageInSeconds := DetermineAgeInSeconds(valueAsBytes)
 
 		// Hostname
-		kvp, _, err = kv.Get("containers/"+instanceId+"/hostname", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/hostname")
+		if valueAsBytes == nil {
 			return containers
 		}
-		hostname := string(kvp.Value)
+		hostname := string(valueAsBytes)
 
 		// HostHostname
-		kvp, _, err = kv.Get("containers/"+instanceId+"/hostinfo/hostname", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/hostinfo/hostname")
+		if valueAsBytes == nil {
 			return containers
 		}
-		hostHostname := string(kvp.Value)
+		hostHostname := string(valueAsBytes)
 
 		container := Container{Hostname: hostname, CntrInfodHttpUrl: cntrInfodHttpUrl, MacAddress: macAddress,
 			IpAddress: ipAddress, HostHostname: hostHostname, AgeInSeconds: ageInSeconds}
