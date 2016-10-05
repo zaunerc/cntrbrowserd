@@ -45,7 +45,7 @@ var tests = []testpair{
 func TestDecodeInstanceIds(t *testing.T) {
 	for _, pair := range tests {
 
-		actual := decodeInstanceIds(pair.input)
+		actual := DecodeInstanceIds(pair.input)
 
 		if !reflect.DeepEqual(actual, pair.expected) {
 			t.Error(

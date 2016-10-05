@@ -2,7 +2,7 @@ package consul
 
 import (
 	"fmt"
-	consulapi "github.com/hashicorp/consul/api"
+	cc "github.com/zaunerc/go_consul_commons"
 )
 
 type Container struct {
@@ -18,10 +18,7 @@ func FetchContainerData(consulUrl string) []Container {
 
 	var containers []Container
 
-	config := consulapi.DefaultConfig()
-	config.Address = consulUrl
-	consul, err := consulapi.NewClient(config)
-
+	consul, err := cc.GetConsulClientForUrl(consulUrl)
 	if err != nil {
 		fmt.Printf("Error while trying to read container registry: %s\n", err)
 		return containers
@@ -34,58 +31,56 @@ func FetchContainerData(consulUrl string) []Container {
 		fmt.Printf("Error while trying to read container registry: %s\n", err)
 		return containers
 	}
+	if allContainerKeys == nil {
+		fmt.Printf("No containers present in registry: Top-level key \"containers/\" does not exist.")
+		return containers
+	}
 
 	instanceIds := DecodeInstanceIds(allContainerKeys)
 
 	for _, instanceId := range instanceIds {
 
 		// cntrInfodUrl
-		kvp, _, err := kv.Get("containers/"+instanceId+"/cntrInfodHttpUrl", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes := cc.InternalGet(kv, "containers/"+instanceId+"/cntrInfodHttpUrl")
+		if valueAsBytes == nil {
 			return containers
 		}
-		cntrInfodHttpUrl := string(kvp.Value)
+		cntrInfodHttpUrl := string(valueAsBytes)
 
 		// MAC
-		kvp, _, err = kv.Get("containers/"+instanceId+"/macAdress", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/macAdress")
+		if valueAsBytes == nil {
 			return containers
 		}
-		macAddress := string(kvp.Value)
+		macAddress := string(valueAsBytes)
 
 		// IP
-		kvp, _, err = kv.Get("containers/"+instanceId+"/ipAdress", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/ipAdress")
+		if valueAsBytes == nil {
 			return containers
 		}
-		ipAddress := string(kvp.Value)
+		ipAddress := string(valueAsBytes)
 
 		// Unix Epoch Timestamp
-		kvp, _, err = kv.Get("containers/"+instanceId+"/unixEpochTimestamp", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/unixEpochTimestamp")
+		if valueAsBytes == nil {
 			return containers
 		}
-		ageInSeconds := DetermineAgeInSeconds(kvp.Value)
+		ageInSeconds := DetermineAgeInSeconds(valueAsBytes)
 
 		// Hostname
-		kvp, _, err = kv.Get("containers/"+instanceId+"/hostname", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/hostname")
+		if valueAsBytes == nil {
 			return containers
 		}
-		hostname := string(kvp.Value)
+		hostname := string(valueAsBytes)
 
 		// HostHostname
-		kvp, _, err = kv.Get("containers/"+instanceId+"/hostinfo/hostname", nil)
-		if err != nil {
-			fmt.Printf("Error while trying to read container registry: %s\n", err)
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/hostinfo/hostname")
+		if valueAsBytes == nil {
 			return containers
 		}
-		hostHostname := string(kvp.Value)
+		hostHostname := string(valueAsBytes)
 
 		container := Container{Hostname: hostname, CntrInfodHttpUrl: cntrInfodHttpUrl, MacAddress: macAddress,
 			IpAddress: ipAddress, HostHostname: hostHostname, AgeInSeconds: ageInSeconds}
