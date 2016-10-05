@@ -2,7 +2,7 @@ package consul
 
 import (
 	"fmt"
-	consulapi "github.com/hashicorp/consul/api"
+	cc "github.com/zaunerc/go_consul_commons"
 )
 
 type Container struct {
@@ -18,10 +18,7 @@ func FetchContainerData(consulUrl string) []Container {
 
 	var containers []Container
 
-	config := consulapi.DefaultConfig()
-	config.Address = consulUrl
-	consul, err := consulapi.NewClient(config)
-
+	consul, err := cc.GetConsulClientForUrl(consulUrl)
 	if err != nil {
 		fmt.Printf("Error while trying to read container registry: %s\n", err)
 		return containers
@@ -34,48 +31,52 @@ func FetchContainerData(consulUrl string) []Container {
 		fmt.Printf("Error while trying to read container registry: %s\n", err)
 		return containers
 	}
+	if allContainerKeys == nil {
+		fmt.Printf("No containers present in registry: Top-level key \"containers/\" does not exist.")
+		return containers
+	}
 
 	instanceIds := DecodeInstanceIds(allContainerKeys)
 
 	for _, instanceId := range instanceIds {
 
 		// cntrInfodUrl
-		valueAsBytes := internalGet(kv, "containers/"+instanceId+"/cntrInfodHttpUrl")
+		valueAsBytes := cc.InternalGet(kv, "containers/"+instanceId+"/cntrInfodHttpUrl")
 		if valueAsBytes == nil {
 			return containers
 		}
 		cntrInfodHttpUrl := string(valueAsBytes)
 
 		// MAC
-		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/macAdress")
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/macAdress")
 		if valueAsBytes == nil {
 			return containers
 		}
 		macAddress := string(valueAsBytes)
 
 		// IP
-		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/ipAdress")
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/ipAdress")
 		if valueAsBytes == nil {
 			return containers
 		}
 		ipAddress := string(valueAsBytes)
 
 		// Unix Epoch Timestamp
-		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/unixEpochTimestamp")
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/unixEpochTimestamp")
 		if valueAsBytes == nil {
 			return containers
 		}
 		ageInSeconds := DetermineAgeInSeconds(valueAsBytes)
 
 		// Hostname
-		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/hostname")
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/hostname")
 		if valueAsBytes == nil {
 			return containers
 		}
 		hostname := string(valueAsBytes)
 
 		// HostHostname
-		valueAsBytes = internalGet(kv, "containers/"+instanceId+"/hostinfo/hostname")
+		valueAsBytes = cc.InternalGet(kv, "containers/"+instanceId+"/hostinfo/hostname")
 		if valueAsBytes == nil {
 			return containers
 		}

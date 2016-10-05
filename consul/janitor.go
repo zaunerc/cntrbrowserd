@@ -2,7 +2,8 @@ package consul
 
 import (
 	"fmt"
-	consulapi "github.com/hashicorp/consul/api"
+	consulapi "github.com/zaunerc/consul/api"
+	cc "github.com/zaunerc/go_consul_commons"
 	"strconv"
 	"strings"
 	"time"
@@ -25,12 +26,9 @@ func runCleanUpTask(consulUrl string, sleepSeconds int) {
 		fmt.Printf("Container registry will be cleaned up in %d seconds...\n", sleepSeconds)
 		time.Sleep(time.Duration(sleepSeconds) * time.Second)
 
-		config := consulapi.DefaultConfig()
-		config.Address = consulUrl
-		consul, err := consulapi.NewClient(config)
-
+		consul, err := cc.GetConsulClientForUrl(consulUrl)
 		if err != nil {
-			fmt.Printf("Error while trying to clean up container registry: %s\n", err)
+			fmt.Printf("Skipping container registry cleanup run. Error while getting Consul HTTP client: %s\n", err)
 			continue
 		}
 
