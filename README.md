@@ -1,1 +1,1 @@
-# cntrbrowserd
+# cntrbrowserd - Container Browser Daemon
